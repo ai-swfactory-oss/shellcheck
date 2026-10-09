@@ -1,0 +1,27 @@
+{
+  "name": "@ai-swfactory-oss/shellcheck",
+  "version": "0.0.0",
+  "description": "ShellCheck, the static analysis tool for shell scripts, as a native binary per platform",
+  "keywords": [
+    "shellcheck",
+    "shell",
+    "bash",
+    "lint"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "bin": {
+    "shellcheck": "bin/shellcheck.js"
+  },
+  "files": [
+    "bin/shellcheck.js",
+    "index.js",
+    "index.d.ts",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
