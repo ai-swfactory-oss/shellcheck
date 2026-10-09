@@ -1,0 +1,22 @@
+name: pr
+
+# Every pull request fetches, packs and installs the packages on every
+# platform. Nothing is published (build.yml skips its publish job for pull
+# requests). The write permissions are only granted so that build.yml's publish
+# job validates; it never runs here.
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}
+      publish: false

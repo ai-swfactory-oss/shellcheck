@@ -1,0 +1,13 @@
+ShellCheck - a static analysis tool for shell scripts
+https://github.com/koalaman/shellcheck
+Copyright (C) Vidar Holen and contributors.
+
+ShellCheck is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, version 3 (see LICENSE). It is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+This npm package is published by ai-swfactory-oss
+(https://github.com/ai-swfactory-oss/shellcheck), which is not affiliated with
+the ShellCheck project. The package is distributed under GPL-3.0-only.
