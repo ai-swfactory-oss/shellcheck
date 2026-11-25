@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
-# Renders the npm packages from the extracted upstream release.
 #
-#   scripts/stage.sh <fetchdir> <outdir>
 #
-# <fetchdir> is the output of scripts/fetch.sh (every platform).
-# Result: <outdir>/shellcheck            the thin package (bin, binaryPath())
-#         <outdir>/shellcheck-<platform> one package per platform binary
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-manifest="$root/upstream.json"
+package="$root/packages/shellcheck"
+manifest="$package/src/upstream.json"
 fetched=${1:?usage: stage.sh <fetchdir> <outdir>}
 out=${2:?usage: stage.sh <fetchdir> <outdir>}
 
@@ -20,7 +16,6 @@ version=$(bash "$root/scripts/pkgver.sh")
 read -r -a platforms <<<"$(jq -r '.assets | keys | join(" ")' "$manifest")"
 
 common='{
-  license: "GPL-3.0-only",
   author: "ai-swfactory",
   homepage: "https://github.com/ai-swfactory-oss/shellcheck#readme",
   bugs: { url: "https://github.com/ai-swfactory-oss/shellcheck/issues" },
@@ -28,7 +23,7 @@ common='{
   publishConfig: { registry: "https://npm.pkg.github.com" }
 }'
 
-notice() { # <platform or "all"> <asset lines>
+notice() {
   cat "$root/packages/NOTICE.in"
   printf '\nThis package: %s %s, re-packaged from ShellCheck v%s.\n' "$1" "$version" "$upstream"
   printf 'Upstream release: https://github.com/koalaman/shellcheck/releases/tag/v%s\n' "$upstream"
@@ -71,6 +66,7 @@ for platform in "${platforms[@]}"; do
       version: \$version,
       description: \"ShellCheck \(\$upstream) native binary for \(\$os)-\(\$cpu) (used by @ai-swfactory-oss/shellcheck)\",
       keywords: [\"shellcheck\", \"shell\", \"lint\"],
+      license: \"GPL-3.0-only\",
       os: [\$os],
       cpu: [\$cpu],
       files: [\"bin/shellcheck\", \"LICENSE\", \"NOTICE\", \"README.md\"],
@@ -80,15 +76,17 @@ for platform in "${platforms[@]}"; do
   optional=$(jq -c --arg n "$name" --arg v "$version" '. + {($n): $v}' <<<"$optional")
 done
 
+built="$package/dist"
+test -f "$built/index.js" || { echo "stage: $built/index.js is missing: build packages/shellcheck first" >&2; exit 1; }
 thin="$out/shellcheck"
 mkdir -p "$thin"
-cp -R "$root/packages/shellcheck/." "$thin/"
+cp -R "$built" "$thin/dist"
+cp "$package/README.md" "$thin/README.md"
 cp "$fetched/${platforms[0]}/LICENSE.txt" "$thin/LICENSE"
 notice "$scope/shellcheck" "This package holds no binary: it runs the one from $scope/shellcheck-<platform>-<arch>." >"$thin/NOTICE"
 jq --arg version "$version" --arg repo "$repo_url" --argjson optional "$optional" \
   ". + {version: \$version, optionalDependencies: \$optional} + $common" \
-  "$root/packages/shellcheck/package.json" >"$thin/package.json"
-chmod 755 "$thin/bin/shellcheck.js"
+  "$package/package.json" >"$thin/package.json"
 
 echo "stage: $version ($upstream) -> $out"
 ls -1 "$out"

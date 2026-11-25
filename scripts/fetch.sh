@@ -1,15 +1,10 @@
 #!/usr/bin/env bash
-# Downloads the upstream ShellCheck release assets named in upstream.json,
-# verifies each against its pinned sha256 digest and extracts it.
 #
-#   scripts/fetch.sh <outdir> [platform ...]     (default: every platform)
 #
-# Result: <outdir>/assets/<asset name>  (the original upstream archive)
-#         <outdir>/<platform>/shellcheck, LICENSE.txt, README.txt
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-manifest="$root/upstream.json"
+manifest="$root/packages/shellcheck/src/upstream.json"
 out=${1:?usage: fetch.sh <outdir> [platform ...]}
 shift
 

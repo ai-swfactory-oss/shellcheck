@@ -1,0 +1,14 @@
+{
+  "version": "1.2.3",
+  "repack": 0,
+  "assets": {
+    "linux-x64": {
+      "name": "shellcheck-v1.2.3.linux.x86_64.tar.xz",
+      "digest": "sha256:00"
+    },
+    "darwin-arm64": {
+      "name": "shellcheck-v1.2.3.darwin.aarch64.tar.xz",
+      "digest": "sha256:11"
+    }
+  }
+}

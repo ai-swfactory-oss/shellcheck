@@ -1,0 +1,15 @@
+{
+  "name": "shellcheck-monorepo",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "shellcheck workspace: ShellCheck as npm packages of the unmodified upstream binaries, one per platform.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ai-swfactory-oss/shellcheck.git"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "devDependencies": {
+    "@types/node": "^24.0.0"
+  }
+}

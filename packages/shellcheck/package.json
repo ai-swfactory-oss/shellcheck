@@ -1,6 +1,5 @@
 {
   "name": "@ai-swfactory-oss/shellcheck",
-  "version": "0.0.0",
   "description": "ShellCheck, the static analysis tool for shell scripts, as a native binary per platform",
   "keywords": [
     "shellcheck",
@@ -8,20 +7,33 @@
     "bash",
     "lint"
   ],
-  "main": "index.js",
-  "types": "index.d.ts",
-  "bin": {
-    "shellcheck": "bin/shellcheck.js"
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ai-swfactory-oss/shellcheck.git",
+    "directory": "packages/shellcheck"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "bin/shellcheck.js",
-    "index.js",
-    "index.d.ts",
+    "dist",
     "LICENSE",
     "NOTICE",
     "README.md"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0"
   }
 }

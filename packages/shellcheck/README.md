@@ -34,9 +34,11 @@ shellcheck script.sh
 From Node:
 
 ```js
-const { binaryPath, version } = require('@ai-swfactory-oss/shellcheck');
-// binaryPath(): absolute path to the native shellcheck binary
-// version: the ShellCheck version, e.g. "0.11.0"
+import { binaryPathOf, supportedPlatforms, upstreamVersion } from '@ai-swfactory-oss/shellcheck'
+// binaryPathOf(targets, os, cpu): { ok: true, value: { packageName, binRelativePath: 'bin/shellcheck' } },
+//   or { ok: false, failure } naming the unsupported platform
+// supportedPlatforms(): { ok: true, value: ['linux-x64', 'linux-arm64', 'darwin-x64', 'darwin-arm64'] }, or { ok: false, failure }
+// upstreamVersion(): { ok: true, value: <the ShellCheck version, e.g. "0.11.0"> }, or { ok: false, failure }
 ```
 
 ## Verify

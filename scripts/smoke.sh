@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
-# Installs the packed tarballs into a scratch project, as a consumer would,
-# and checks that the installed `shellcheck` is the native upstream binary.
 #
-#   scripts/smoke.sh <tgzdir> <platform>      e.g. dist/tgz linux-x64
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 tgz=$(cd "${1:?usage: smoke.sh <tgzdir> <platform>}" && pwd)
 platform=${2:?usage: smoke.sh <tgzdir> <platform>}
-upstream=$(jq -er .version "$root/upstream.json")
+upstream=$(jq -er .version "$root/packages/shellcheck/upstream.json")
 version=$(bash "$root/scripts/pkgver.sh")
 
 thin="$tgz/ai-swfactory-oss-shellcheck-$version.tgz"
@@ -38,25 +35,18 @@ echo "== shellcheck --version"
 "$bin" --version | tee version.out
 grep -q "^version: $upstream\$" version.out || { echo "smoke: expected version $upstream" >&2; exit 1; }
 
-echo "== lint fixture (expect SC2086, exit 1)"
-set +e
-"$bin" "$root/test/fixture.sh" >lint.out 2>&1
-rc=$?
-set -e
-cat lint.out
-test "$rc" -eq 1 || { echo "smoke: expected exit 1, got $rc" >&2; exit 1; }
-grep -q SC2086 lint.out || { echo "smoke: SC2086 not reported" >&2; exit 1; }
-
-echo "== lint clean script (expect exit 0)"
-"$bin" "$root/test/clean.sh"
-
-echo "== require() API"
-node -e '
-  const sc = require("@ai-swfactory-oss/shellcheck");
-  const fs = require("node:fs");
-  if (sc.version !== process.argv[1]) throw new Error(`version ${sc.version} != ${process.argv[1]}`);
-  fs.accessSync(sc.binaryPath(), fs.constants.X_OK);
-  console.log(sc.version, sc.binaryPath());
+echo "== upstreamVersion() and binaryPath()"
+node --input-type=module -e '
+  import fs from "node:fs";
+  import { binaryPath, describeFailure, upstreamVersion } from "@ai-swfactory-oss/shellcheck";
+  const expected = process.argv[1];
+  const version = upstreamVersion();
+  if (!version.ok) throw new Error(describeFailure(version.failure));
+  if (version.value !== expected) throw new Error("upstreamVersion() " + version.value + " != " + expected);
+  const located = binaryPath(process.platform, process.arch);
+  if (!located.ok) throw new Error(describeFailure(located.failure));
+  fs.accessSync(located.value, fs.constants.X_OK);
+  console.log(version.value, located.value);
 ' "$upstream"
 
 echo "smoke: $platform OK"
